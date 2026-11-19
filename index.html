@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>背嚢戦線 PACK FRONT</title>
+<style>
+:root{--u:40px;--amber:#ffb347;--cyan:#6fe3ff;--ink:#0b0e14;--line:#2b3446}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);color:#dfe6f3;
+  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;user-select:none;-webkit-user-select:none}
+#cv{position:fixed;touch-action:none;display:block}
+#ui{position:fixed;width:calc(var(--u)*9);height:calc(var(--u)*16);pointer-events:none}
+#ui>*{position:absolute;pointer-events:auto}
+button{font:inherit;color:var(--amber);border:0;cursor:pointer;font-weight:700;letter-spacing:.06em;
+  font-size:calc(var(--u)*.3);padding:0 calc(var(--u)*.22);height:calc(var(--u)*.78);
+  background:linear-gradient(180deg,#242c3d,#141924);
+  clip-path:polygon(calc(var(--u)*.16) 0,100% 0,100% calc(100% - var(--u)*.16),calc(100% - var(--u)*.16) 100%,0 100%,0 calc(var(--u)*.16));
+  box-shadow:inset 0 0 0 calc(var(--u)*.03) #55461f, inset 0 calc(var(--u)*.05) 0 rgba(255,255,255,.06)}
+button:active{filter:brightness(1.35)}
+button[disabled]{color:#5b6272;box-shadow:inset 0 0 0 calc(var(--u)*.03) #2a3040;cursor:default}
+button.pri{background:linear-gradient(180deg,#ffc76b,#e08a1f);color:#1b1206;box-shadow:inset 0 calc(var(--u)*.05) 0 rgba(255,255,255,.35)}
+button i{font-style:normal;color:#ffe08a;margin-left:.35em}
+button[disabled] i{color:#5b6272}
+#bPause{right:calc(var(--u)*.15);top:calc(var(--u)*.14);width:calc(var(--u)*.78);padding:0}
+#info{left:calc(var(--u)*.2);right:calc(var(--u)*.2);top:calc(var(--u)*8.72);height:calc(var(--u)*1.02);display:flex;align-items:center;gap:calc(var(--u)*.12);
+  background:linear-gradient(90deg,rgba(24,30,43,.95),rgba(16,20,30,.8));border-left:calc(var(--u)*.06) solid var(--amber);padding:0 calc(var(--u)*.15)}
+#iText{flex:1;min-width:0;line-height:1.3}
+#iName{display:block;font-size:calc(var(--u)*.3);color:#fff}
+#iName small{color:var(--amber);margin-left:.5em;font-size:.85em}
+#iDesc{display:block;font-size:calc(var(--u)*.235);color:#aab4c8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#iDesc em{font-style:normal;color:var(--cyan)}
+#iBtns{display:flex;gap:calc(var(--u)*.1)}
+#iBtns button{height:calc(var(--u)*.7);font-size:calc(var(--u)*.26);white-space:nowrap}
+#bar{left:calc(var(--u)*.2);right:calc(var(--u)*.2);top:calc(var(--u)*15.06);display:flex;gap:calc(var(--u)*.14)}
+#bar button{flex:1;white-space:nowrap}
+#bGo{flex:1.25!important}
+#toast{left:50%;top:calc(var(--u)*1.15);transform:translateX(-50%);background:rgba(10,13,20,.92);color:#fff;border:1px solid var(--amber);
+  font-size:calc(var(--u)*.28);padding:calc(var(--u)*.1) calc(var(--u)*.3);white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.on{opacity:1}
+#dbg{left:calc(var(--u)*.15);top:calc(var(--u)*.98);display:none;gap:4px;flex-wrap:wrap;width:calc(var(--u)*8.7)}
+#dbg button{height:calc(var(--u)*.5);font-size:calc(var(--u)*.2);clip-path:none;color:#9fe}
+#menu{position:fixed;inset:0;display:flex;overflow-y:auto;background:rgba(6,8,13,.82);z-index:5}
+#menu.off{display:none}
+.vol{display:flex;gap:calc(var(--u)*.3);justify-content:center}
+.vol label{display:flex;align-items:center;gap:calc(var(--u)*.12);font-size:calc(var(--u)*.24);color:#b9c2d4;flex:1}
+.vol input{flex:1;min-width:0;accent-color:#ffb347;height:calc(var(--u)*.5)}
+#menu.title{background:linear-gradient(180deg,rgba(6,8,13,.15) 0%,rgba(6,8,13,.35) 40%,rgba(6,8,13,.8) 100%),url(assets/bg/title.webp) center/auto 100% no-repeat,#05070b}
+@media (max-aspect-ratio:2/3){#menu.title{background-size:auto,cover,auto}}
+#menu.title .how,#menu.title .panel>p{background:rgba(8,10,16,.74);border:1px solid var(--line);padding:calc(var(--u)*.22) calc(var(--u)*.25)}
+#menu.title h1{margin-bottom:calc(var(--u)*.35)}
+.panel{margin:auto;width:calc(var(--u)*7.6);padding:calc(var(--u)*.5) calc(var(--u)*.45);text-align:center;display:flex;flex-direction:column;gap:calc(var(--u)*.3)}
+.panel h1{margin:0;font-size:calc(var(--u)*1.05);letter-spacing:.14em;color:#fff;font-weight:900;text-shadow:0 0 calc(var(--u)*.4) rgba(255,179,71,.55)}
+.panel h1 span{display:block;font-size:calc(var(--u)*.3);letter-spacing:.5em;color:var(--amber);margin-top:calc(var(--u)*.1);text-indent:.5em}
+.panel h2{margin:0;font-size:calc(var(--u)*.62);letter-spacing:.12em;color:#fff}
+.panel p{margin:0;font-size:calc(var(--u)*.27);line-height:1.75;color:#b9c2d4}
+.panel p b{color:var(--amber)}
+.panel .how{text-align:left;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:calc(var(--u)*.25) 0}
+.panel .how li{font-size:calc(var(--u)*.255);line-height:1.7;color:#b9c2d4;margin-left:1.2em}
+.panel .how ol{margin:0;padding:0}
+.panel button{height:calc(var(--u)*.95);font-size:calc(var(--u)*.34)}
+.panel .big{font-size:calc(var(--u)*.9);color:var(--amber);font-weight:900}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="ui">
+  <button id="bPause" aria-label="メニュー">Ⅱ</button>
+  <div id="dbg"></div>
+  <div id="info"><div id="iText"><span id="iName"></span><span id="iDesc"></span></div>
+    <div id="iBtns"><button id="bRot">回転</button><button id="bSell">売却</button><button id="bBuy">購入</button></div></div>
+  <div id="bar"><button id="bReroll"></button><button id="bExpand"></button><button id="bGo" class="pri">出撃 ▶</button><button id="bSpeed"></button></div>
+  <div id="toast"></div>
+</div>
+<div id="menu"><div class="panel" id="panel"></div></div>
+<script src="js/data.js"></script>
+<script src="js/sim.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
